@@ -1,4 +1,4 @@
-#Bambarajos
+# Bambarajos
 
 ## Introduction
 **Bambarajos** is a computer program originally developed for No 48-49 edition of art.es. It is an application featuring 2,400 videos of kissing couples. Every time the computer microphone hears any sound the couples change. With the arrow keys you may increase or decrease the sensitivity of the couples to sound, --this allows the kisses to synchronize to the rhythm of music, for example. 
