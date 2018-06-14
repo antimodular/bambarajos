@@ -48,7 +48,7 @@ void ofApp::setup(){
 	
     //-----------GUI --------
     int gui_x = 10;
-    int gui_y = 150;
+    int gui_y = 10;
     int gui_w = 210;
     int gui_h = 350;
     
@@ -89,7 +89,7 @@ void ofApp::setup(){
     gui_detection.add(isSnare.set("isSnare",false));
     gui_detection.add(isHat.set("isHat",false));
     
-    gui_detection.add(jumWaitTime.set("jumWaitTime",1000,0,5000));
+    gui_detection.add(jumWaitTime.set("jumWaitTime",225,0,5000));
     gui_detection.add(x_keyTriggered.set("xKeyTriggered",false));
     
     gui_detection.loadFromFile("gui_detection.xml");
