@@ -7,7 +7,7 @@
 	<isOnset>1</isOnset>
 	<isKick>1</isKick>
 	<isSnare>1</isSnare>
-	<isHat>0</isHat>
+	<isHat>1</isHat>
 	<jumWaitTime>225</jumWaitTime>
 	<xKeyTriggered>0</xKeyTriggered>
 </detection>
