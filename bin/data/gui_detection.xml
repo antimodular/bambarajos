@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<detection>
+	<wantOnset>1</wantOnset>
+	<wantKick>1</wantKick>
+	<wantSnare>1</wantSnare>
+	<wantHat>1</wantHat>
+	<isOnset>1</isOnset>
+	<isKick>1</isKick>
+	<isSnare>1</isSnare>
+	<isHat>1</isHat>
+	<jumWaitTime>1000</jumWaitTime>
+	<xKeyTriggered>0</xKeyTriggered>
+</detection>

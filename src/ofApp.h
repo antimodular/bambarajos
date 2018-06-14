@@ -1,11 +1,13 @@
 #pragma once
 
 #include "ofMain.h"
-#include "goThreadedVideo.h"
+//#include "goThreadedVideo.h"
 
-#include "ofxXmlSettings.h"
+
 #include "ofxOsc.h"
-#include "ofxSimpleGuiToo.h"
+#include "ofxGui.h"
+
+#include "ofEvents.h"
 
 //OSC sender
 #define masterIP "localhost" //"192.168.100.100"
@@ -21,7 +23,7 @@
 
 #define soundVolumeMax 1.25
 
-class testApp : public ofBaseApp{
+class ofApp : public ofBaseApp{
 
     string version;
     
@@ -48,15 +50,15 @@ class testApp : public ofBaseApp{
 	
 	void triggerNewVideo();
 	
-		void loaded(string & path);
-		void error(goVideoError & err);
+    void loaded(); //string & path);
+//        void error(goVideoError & err);
 
 	ofTrueTypeFont  franklinBook;
 	ofTrueTypeFont franklinBookSmall;
 	float textX2;
 	
 		//goThreadedVideo * videos;
-	goThreadedVideo videos[numberOfVideos];
+	ofVideoPlayer videos[numberOfVideos];
 	int indexToUsedVideos[numberOfVideos];
 	
 	string videoNames[2400]; // names of all video files
@@ -76,7 +78,7 @@ class testApp : public ofBaseApp{
 	
 	int gayCount, lesbianCount,straightCount;
 	int gayLimit,lesbianLimit,straightLimit;
-	float gayAmount,lesbianAmount,straightAmount;
+	ofParameter<float> gayAmount,lesbianAmount,straightAmount;
 	float old_gayAmount,old_lesbianAmount,old_straightAmount;
 	
 	int amtOfVideoFiles;
@@ -92,22 +94,27 @@ class testApp : public ofBaseApp{
 	bool bLoadNewVideo, bLoadNewVideoDone;
 	
 	bool jumpToNext;
-	long jumpWaitTimer;
-	int jumWaitTime;
+	int jumpWaitTimer;
+	ofParameter<int> jumWaitTime;
 	
-	bool wantHat, wantKick, wantSnare, wantOnset;
+	ofParameter<bool> wantHat, wantKick, wantSnare, wantOnset;
 	bool oldWantOnset, oldWantKick, oldWantSnare, oldWantHat;
 	
-	bool isOnset, isKick, isSnare, isHat;
+	ofParameter<bool> isOnset, isKick, isSnare, isHat;
 	long lastOnsetTime, lastKickTime, lastSnareTime, lastHatTime;
-	ofxSimpleGuiToo	gui;
+    
+	ofxPanel gui_main;
+    ofxPanel gui_kisses;
+    ofxPanel gui_detection;
+    ofxPanel gui_distribution;
+    
+	ofParameter<bool> bShowGui;
+	ofParameter<bool> showFullscreen;
 	
-	bool hideGUI;
-	bool showFullscreen;
+    ofParameter<float> soundVolume;
+    float old_soundVolume;
 	
-	float soundVolume, old_soundVolume;
-	
-	bool allSame;
+	ofParameter<bool> allSame;
 	
 	bool mouseDoublePressed;
 	unsigned long lastTap;
@@ -116,19 +123,22 @@ class testApp : public ofBaseApp{
 	bool showSensitivity;
 	float showSensitivityTimer;
 
-	bool exitApp;
+	ofParameter<bool> exitApp;
 	
 	int actionMode;
 	float showActionModeTimer;
 	bool showActionMode;
 	bool actionMode2JumpTriggered;
 	
-    bool bUseSound,old_bUseSound;
-    bool bUseKeyTrigger;
+    ofParameter<bool> bUseSound;
+    bool old_bUseSound;
+    ofParameter<bool> bUseKeyTrigger;
     
     float autoTriggerTimer;
-    float autoTriggerDuration;
-    bool     x_keyTriggered;
+    ofParameter<float> autoTriggerDuration;
+    ofParameter<bool>     x_keyTriggered;
+    
+    bool bCheckLoading;
     
 private:
 	ofxOscReceiver	receiver;
@@ -137,4 +147,6 @@ private:
 	int				current_msg_string;
 	string		msg_strings[NUM_MSG_STRINGS];
 	float			timers[NUM_MSG_STRINGS];
+    
+    void checkGui();
 };

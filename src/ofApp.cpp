@@ -1,4 +1,4 @@
-#include "testApp.h"
+#include "ofApp.h"
 
 //set development target to OSX 10.6 for it to compile well
 
@@ -30,15 +30,15 @@
 
 
 //--------------------------------------------------------------
-void testApp::setup(){
+void ofApp::setup(){
 	
-    version = "kissing16";
+//    version = "Bambarajos17";
     
 	// ofSetLogLevel(OF_LOG_VERBOSE);
 	
 	//osx
 	//ofSetDataPathRoot("../../../.data/"); //hidden data folder in regular place
-	ofSetDataPathRoot("../../data/"); //data folder placed inside app
+//    ofSetDataPathRoot("../../data/"); //data folder placed inside app
 	//ofSetDataPathRoot("../../rlh/j/t/o/data/"); //data folder placed inside app
 	//windows
 	//ofSetDataPathRoot(".data/");
@@ -46,40 +46,68 @@ void testApp::setup(){
     ofSetFrameRate(30);
 	ofSetVerticalSync(true);
 	
-	gui.addTitle("kisses");
-	gui.addSlider("sensitivity", soundVolume, 0, soundVolumeMax); //pow(1.4,2) = 2
-	gui.addButton("exit software", exitApp);
-	gui.addToggle("fullscreen", showFullscreen);
-    gui.addToggle("use sound", bUseSound);
-    gui.addSlider("auto duration", autoTriggerDuration, 0, 600);
-
+    //-----------GUI --------
+    int gui_x = 10;
+    int gui_y = 150;
+    int gui_w = 210;
+    int gui_h = 350;
     
-	gui.addTitle("beat detection").setNewColumn(true);
-	gui.addToggle("want Onset", wantOnset);
-	gui.addToggle("want Kick", wantKick);
-	gui.addToggle("want Snare", wantSnare);
-	gui.addToggle("want Hat", wantHat);
-	gui.addTitle("").setNewColumn(true);
-	gui.addToggle("Onset", isOnset);
-	gui.addToggle("Kick", isKick);
-	gui.addToggle("Snare", isSnare);
-	gui.addToggle("Hat", isHat);
-	gui.addTitle("").setNewColumn(true);
-	gui.addSlider("jump wait time", jumWaitTime, 0, 5000);
-	gui.addToggle("x key", x_keyTriggered);
-	
-	gui.addTitle("distribution").setNewColumn(true);
-	gui.addButton("even", allSame);
-	gui.addSlider("gay     ", gayAmount, 0, 100.0);
-	gui.addSlider("lesbian ", lesbianAmount, 0, 100.0);
-	gui.addSlider("straight", straightAmount, 0, 100.0);
-	
-	
-	gui.loadFromXML();
-	gui.setDefaultKeys(false);
+    gui_main.setup();
+    gui_main.setHeaderBackgroundColor(ofColor(255,0,0));
+    gui_main.setName("Bambarajos");
+    gui_main.setPosition(gui_x,gui_y);
+    gui_main.add(bShowGui.set("bShowGui",false));
+    gui_main.add(showFullscreen.set("showFullscreen",true));
+    gui_main.add(exitApp.set("exitApp",false));
+    
+    gui_main.loadFromFile("gui_main.xml");
+    bShowGui = false;
+    showFullscreen = true;
+    exitApp = false;
+    
+    gui_kisses.setup();
+    gui_kisses.setHeaderBackgroundColor(ofColor(255,0,0));
+    gui_kisses.setName("kisses");
+    gui_kisses.setPosition(gui_x,gui_main.getPosition().y+gui_main.getHeight());
+    gui_kisses.add(bUseSound.set("useSound",true));
+    gui_kisses.add(soundVolume.set("sensitivity",1,0,soundVolumeMax));
+    gui_kisses.add(autoTriggerDuration.set("autoTriggerDuration",200,0,600));
+    gui_kisses.loadFromFile("gui_kisses.xml");
+    
+    
+    gui_detection.setup();
+    gui_detection.setHeaderBackgroundColor(ofColor(255,0,0));
+    gui_detection.setName("detection");
+    gui_detection.setPosition(gui_x,gui_kisses.getPosition().y+gui_kisses.getHeight());
+    
+    gui_detection.add(wantOnset.set("wantOnset",true));
+    gui_detection.add(wantKick.set("wantKick",true));
+    gui_detection.add(wantSnare.set("wantSnare",true));
+    gui_detection.add(wantHat.set("wantHat",true));
+    gui_detection.add(isOnset.set("isOnset",false));
+    gui_detection.add(isKick.set("isKick",false));
+    gui_detection.add(isSnare.set("isSnare",false));
+    gui_detection.add(isHat.set("isHat",false));
+    
+    gui_detection.add(jumWaitTime.set("jumWaitTime",1000,0,5000));
+    gui_detection.add(x_keyTriggered.set("xKeyTriggered",false));
+    
+    gui_detection.loadFromFile("gui_detection.xml");
+    x_keyTriggered = false;
+    
+    gui_distribution.setup();
+    gui_distribution.setHeaderBackgroundColor(ofColor(255,0,0));
+    gui_distribution.setName("distribution");
+    gui_distribution.setPosition(gui_x,gui_detection.getPosition().y+gui_detection.getHeight());
+    gui_distribution.add(allSame.set("even",false));
+    gui_distribution.add(gayAmount.set("gay",33,0,100));
+    gui_distribution.add(lesbianAmount.set("lesbian",33,0,100));
+    gui_distribution.add(straightAmount.set("straight",33,0,100));
+    gui_distribution.loadFromFile("gui_distribution.xml");
 
-	franklinBook.loadFont("frabk.ttf", 32);
-	franklinBookSmall.loadFont("frabk.ttf", 14);
+
+	franklinBook.load("frabk.ttf", 32);
+	franklinBookSmall.load("frabk.ttf", 14);
 	
 	showFullscreen = true;
 	exitApp = false;
@@ -153,7 +181,8 @@ void testApp::setup(){
 	ofHideCursor();
 	initDone = false;
 	initStage = 0;
-	
+    bCheckLoading = false;
+    
 	mouseDoublePressed = false;
 	
 	actionMode = 1;
@@ -166,9 +195,12 @@ void testApp::setup(){
 	 keyIsDown[i] = false;
 	 }
 	 */
+    
+    ofHideCursor();
+   
 }
 
-void testApp::startup(){
+void ofApp::startup(){
 	
 	
 	if(initStage == 0){
@@ -213,7 +245,7 @@ void testApp::startup(){
 			
 			
 			float m0 = MAX(gayAmount,lesbianAmount);
-			float m = MAX(m0,straightAmount);
+			float m = MAX(m0,straightAmount.get());
 			
 			gayLimit = gayAmount / m * maxVideoType;
 			lesbianLimit = lesbianAmount / m * maxVideoType;
@@ -350,19 +382,20 @@ void testApp::startup(){
 			cout<<"playOrderCnt "<<playOrderCnt<<", videoPlayOrder[playOrderCnt] "<<videoPlayOrder[playOrderCnt]<<endl;
 			
 			indexToUsedVideos[currentlyLoadingVideo] = videoPlayOrder[playOrderCnt];
-			videos[currentlyLoadingVideo].loadMovie(fileName);
+			videos[currentlyLoadingVideo].loadAsync(fileName);
 			playOrderCnt++;
 			// attach event listeners so we know when the movie is loaded
-			ofAddListener(videos[currentlyLoadingVideo].success, this, &testApp::loaded);
-			ofAddListener(videos[currentlyLoadingVideo].error, this, &testApp::error);
+//            ofAddListener(videos[currentlyLoadingVideo].isLoaded(), this, &ofApp::loaded);
+            bCheckLoading = true;
+//            ofAddListener(videos[currentlyLoadingVideo].error, this, &ofApp::error);
 		}
 		
 		// check if we're currently loading a movie
 		if (currentlyLoadingVideo == numberOfVideosLoaded && numberOfVideosLoaded < numberOfVideos) {
 			// use psuedo draw and update to force the loading of movies without actually having to be showing them onscreen
 			// this is an ugly hack I use to load multiple movies without having to actually be drawing them to screen
-			videos[currentlyLoadingVideo].psuedoUpdate();
-			videos[currentlyLoadingVideo].psuedoDraw();
+//            videos[currentlyLoadingVideo].psuedoUpdate();
+//            videos[currentlyLoadingVideo].psuedoDraw();
 			
 			cout<<"pseudo"<<endl;
 		}
@@ -409,7 +442,7 @@ void testApp::startup(){
     
 }
 
-void testApp::exit(){
+void ofApp::exit(){
 	
     
     ofxOscMessage temp_sendMessage;
@@ -420,7 +453,7 @@ void testApp::exit(){
 	cout<<"exit"<<endl;
 }
 
-int testApp::convertStringToSeconds(string s){
+int ofApp::convertStringToSeconds(string s){
 	
 	
 	vector<string> fileTxt;
@@ -465,17 +498,13 @@ int testApp::convertStringToSeconds(string s){
 	
 }
 //--------------------------------------------------------------
-void testApp::update(){
+void ofApp::update(){
 	
     ofBackground(0,0,0);
 	
+    checkGui();
     
-	if(hideGUI == true){
-		hideGUI = false;
-		cout<<"hide gui"<<endl;
-		ofHideCursor();
-		gui.hide();
-	}
+    
 	if(exitApp == true){
 		std::exit(1);
 		//exit();
@@ -554,12 +583,13 @@ void testApp::update(){
 			cout<<"playOrderCnt "<<playOrderCnt<<", videoPlayOrder[playOrderCnt] "<<videoPlayOrder[playOrderCnt]<<endl;
 			
 			indexToUsedVideos[currentlyLoadingVideo] = videoPlayOrder[playOrderCnt];
-			videos[currentlyLoadingVideo].loadMovie(fileName);
+			videos[currentlyLoadingVideo].loadAsync(fileName);
 			
 			
 			// attach event listeners so we know when the movie is loaded
-			ofAddListener(videos[currentlyLoadingVideo].success, this, &testApp::loaded);
-			ofAddListener(videos[currentlyLoadingVideo].error, this, &testApp::error);
+//            ofAddListener(videos[currentlyLoadingVideo].isLoaded(), this, &ofApp::loaded);
+            bCheckLoading = true;
+//            ofAddListener(videos[currentlyLoadingVideo].error, this, &ofApp::error);
 			
 			
 			
@@ -578,8 +608,8 @@ void testApp::update(){
 		}//end if(bLoadNewVideo == true)
 		
 		if(bLoadNewVideoDone == true){
-			videos[currentlyLoadingVideo].psuedoUpdate();
-			videos[currentlyLoadingVideo].psuedoDraw();
+//            videos[currentlyLoadingVideo].psuedoUpdate();
+//            videos[currentlyLoadingVideo].psuedoDraw();
 			//cout<<"pseudo"<<endl;
 		}
 		
@@ -587,7 +617,7 @@ void testApp::update(){
 		
 		if(bUseSound) OSCupdate();
 		
-		if(gui.isOn()){
+		if(bShowGui){
 			if(allSame){
 				gayAmount = lesbianAmount = straightAmount = 100/3;
 			}
@@ -666,7 +696,7 @@ void testApp::update(){
 		if(ofGetElapsedTimef() - showSensitivityTimer >= 3.0){
 			
 			showSensitivity = false;
-			gui.saveToXML();
+            gui_detection.saveToFile("gui_detection.xml");
 		}
 		
         if(soundVolume != old_soundVolume){
@@ -686,10 +716,13 @@ void testApp::update(){
         }
 		
 	}//else if(initDone == false)
-	
+
+    if(bCheckLoading == true){
+        loaded();
+    }
 }
 
-void testApp::OSCupdate(){
+void ofApp::OSCupdate(){
 	
 	jumpToNext = false;
 	
@@ -769,7 +802,7 @@ void testApp::OSCupdate(){
 	}
 }
 
-void testApp::triggerNewVideo(){
+void ofApp::triggerNewVideo(){
 	
 	
 	currentlyLoadingVideo = currentVideo;
@@ -796,7 +829,7 @@ void testApp::triggerNewVideo(){
 }
 
 //--------------------------------------------------------------
-void testApp::draw(){
+void ofApp::draw(){
 	
     ofSetColor(255,255,255);
 	
@@ -850,7 +883,7 @@ void testApp::draw(){
 			}
 		}
         
-		if(gui.isOn()){
+		if(bShowGui){
 			
 			//playhead lines
 			ofSetLineWidth(2);
@@ -876,11 +909,16 @@ void testApp::draw(){
 			ofDrawBitmapString("reaction mode "+ ofToString(actionMode) + ", "+ofToString(actionMode2JumpTriggered),20,140);
 			
 			ofPopMatrix();
+            
+            gui_main.draw();
+            gui_kisses.draw();
+            gui_detection.draw();
+            gui_distribution.draw();
 		}
 		
 		
-		gui.draw();
-		
+	
+        
 		if(showSensitivity == true){
 			ofSetHexColor(0xFFFFFF);
 			//soundVolumeMax
@@ -902,8 +940,15 @@ void testApp::draw(){
 	
 }
 
-void testApp::loaded(string & path) {
-	ofLogVerbose() << "Finsished loading:" << path;
+void ofApp::checkGui(){
+    if(x_keyTriggered == true){
+        x_keyTriggered = false;
+        jumpToNext = true;
+        autoTriggerTimer = ofGetElapsedTimef();
+    }
+}
+void ofApp::loaded() { //string & path) {
+    ofLogVerbose() << "Finsished loading:"; // << path;
 	//remove the event listeners
 	
 	//videos[currentlyLoadingVideo].setSpeed(0);
@@ -911,25 +956,26 @@ void testApp::loaded(string & path) {
 	
 	int frameNum = kissFrameNum[indexToUsedVideos[currentlyLoadingVideo]];
 	//videos[currentlyLoadingVideo].setFrame(frameNum);
-	
-	ofRemoveListener(videos[currentlyLoadingVideo].success, this, &testApp::loaded);
-	ofRemoveListener(videos[currentlyLoadingVideo].error, this, &testApp::error);
+	//    ofRemoveListener(ofEvents().update, this, &eventsObject::update);
+    bCheckLoading = false;
+//    ofRemoveListener(videos[currentlyLoadingVideo].isLoaded(), this, &ofApp::loaded);
+//    ofRemoveListener(videos[currentlyLoadingVideo].error, this, &ofApp::error);
 	// increment the counter for total number of movies loaded...this will cause the if statement in update to start loading again
 	numberOfVideosLoaded++;
 	bLoadNewVideoDone = false;
 }
 
-void testApp::error(goVideoError & err) {
-	ofLogVerbose() << "Error loading:" << err;
-	//remove the event listeners
-	ofRemoveListener(videos[currentlyLoadingVideo].success, this, &testApp::loaded);
-	ofRemoveListener(videos[currentlyLoadingVideo].error, this, &testApp::error);
-	// increment the counter for total number of movies loaded...this will cause the if statement in update to start loading again
-	numberOfVideosLoaded++;
-}
+//void ofApp::error(goVideoError & err) {
+//    ofLogVerbose() << "Error loading:" << err;
+//    //remove the event listeners
+//    ofRemoveListener(videos[currentlyLoadingVideo].success, this, &ofApp::loaded);
+//    ofRemoveListener(videos[currentlyLoadingVideo].error, this, &ofApp::error);
+//    // increment the counter for total number of movies loaded...this will cause the if statement in update to start loading again
+//    numberOfVideosLoaded++;
+//}
 
 //--------------------------------------------------------------
-void testApp::keyPressed(int key){
+void ofApp::keyPressed(int key){
 	
 	//keyIsDown[key] = true;
 	
@@ -994,66 +1040,64 @@ void testApp::keyPressed(int key){
             
 	}
 	
-        x_keyTriggered = false;
+//        x_keyTriggered = false;
 	
 	
 }
 
 //--------------------------------------------------------------
-void testApp::keyReleased(int key){
+void ofApp::keyReleased(int key){
 	//keyIsDown[key] = false;
 
-
-    switch(key){
-        case'x':
-            x_keyTriggered = true;
-            jumpToNext = true;
-            autoTriggerTimer = ofGetElapsedTimef();
-            break;
+    if(key =='g'){
+        bShowGui = !bShowGui;
+        cout<<"hide gui"<<endl;
+        if(bShowGui == false){ 
+            ofHideCursor();
             
-        case 'g':
-            if(gui.isOn() == false){
-                gui.show();
-                ofShowCursor();
-            }else{
-                gui.hide();
-                gui.saveToXML();
-                ofHideCursor();
-            }
-            break;
-
-        case 'f':
-            ofToggleFullscreen();
-            break;
-
+            gui_main.saveToFile("gui_main.xml");
+            gui_kisses.saveToFile("gui_kisses.xml");
+            gui_detection.saveToFile("gui_detection.xml");
+            gui_distribution.saveToFile("gui_distribution.xml");
+        }else{
+            ofShowCursor();
+        }
     }
     
+    if(key == 'x'){
+//        x_keyTriggered = true;
+        jumpToNext = true;
+        autoTriggerTimer = ofGetElapsedTimef();
+    }
+    if(key == 'f') ofToggleFullscreen();
+
+    
 
     
 }
 
 //--------------------------------------------------------------
-void testApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y ){
 	
 }
 
 //--------------------------------------------------------------
-void testApp::mouseDragged(int x, int y, int button){
+void ofApp::mouseDragged(int x, int y, int button){
 	
 }
 
 //--------------------------------------------------------------
-void testApp::mousePressed(int x, int y, int button){
+void ofApp::mousePressed(int x, int y, int button){
 	
 	unsigned long curTap = ofGetElapsedTimeMillis();
 	if(lastTap != 0 && curTap - lastTap < 500){
 		if(x < 100 && y < 100){
 			//cout<<"mousePressed"<<endl;
-			if(!gui.isOn()){
-				gui.show();
+			if(bShowGui == false){
+                bShowGui = true;
 				ofShowCursor();
 			}else{
-				gui.hide();
+                bShowGui = false;
 				ofHideCursor();
 			}
 		}
@@ -1064,9 +1108,9 @@ void testApp::mousePressed(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void testApp::mouseReleased(int x, int y, int button){
+void ofApp::mouseReleased(int x, int y, int button){
 	
-	if(gui.isOn()){
+	if(bShowGui == true){
 		if(gayAmount != old_gayAmount){
 			int rest = 100 - gayAmount;
 			
@@ -1118,17 +1162,17 @@ void testApp::mouseReleased(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void testApp::windowResized(int w, int h){
+void ofApp::windowResized(int w, int h){
 	
 }
 
 //--------------------------------------------------------------
-void testApp::gotMessage(ofMessage msg){
+void ofApp::gotMessage(ofMessage msg){
 	
 }
 
 //--------------------------------------------------------------
-void testApp::dragEvent(ofDragInfo dragInfo){
+void ofApp::dragEvent(ofDragInfo dragInfo){
 	
 }
 

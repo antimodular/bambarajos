@@ -1,0 +1,74 @@
+<controls>
+    <Button_hide_GUI>
+        <name>hide GUI</name>
+        <value>0</value>
+    </Button_hide_GUI>
+    <Toggle_verti_sync>
+        <name>verti sync</name>
+        <value>1</value>
+    </Toggle_verti_sync>
+    <Toggle_fullscreen>
+        <name>fullscreen</name>
+        <value>0</value>
+    </Toggle_fullscreen>
+    <Button_exit_software>
+        <name>exit software</name>
+        <value>0</value>
+    </Button_exit_software>
+    <Toggle_want_Onset>
+        <name>want Onset</name>
+        <value>0</value>
+    </Toggle_want_Onset>
+    <Toggle_want_Kick>
+        <name>want Kick</name>
+        <value>1</value>
+    </Toggle_want_Kick>
+    <Toggle_want_Snare>
+        <name>want Snare</name>
+        <value>1</value>
+    </Toggle_want_Snare>
+    <Toggle_want_Hat>
+        <name>want Hat</name>
+        <value>0</value>
+    </Toggle_want_Hat>
+    <Toggle_Onset>
+        <name>Onset</name>
+        <value>0</value>
+    </Toggle_Onset>
+    <Toggle_Kick>
+        <name>Kick</name>
+        <value>1</value>
+    </Toggle_Kick>
+    <Toggle_Snare>
+        <name>Snare</name>
+        <value>1</value>
+    </Toggle_Snare>
+    <Toggle_Hat>
+        <name>Hat</name>
+        <value>0</value>
+    </Toggle_Hat>
+    <SliderInt_jump_wait_time>
+        <name>jump wait time</name>
+        <value>855</value>
+    </SliderInt_jump_wait_time>
+    <SliderFloat_sensitivity>
+        <name>sensitivity</name>
+        <value>0.000000</value>
+    </SliderFloat_sensitivity>
+    <Button_even>
+        <name>even</name>
+        <value>0</value>
+    </Button_even>
+    <SliderFloat_gay_____>
+        <name>gay     </name>
+        <value>33.000000</value>
+    </SliderFloat_gay_____>
+    <SliderFloat_lesbian_>
+        <name>lesbian </name>
+        <value>33.500000</value>
+    </SliderFloat_lesbian_>
+    <SliderFloat_straight>
+        <name>straight</name>
+        <value>33.500000</value>
+    </SliderFloat_straight>
+</controls>
