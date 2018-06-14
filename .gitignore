@@ -38,7 +38,7 @@ tests/**/[Rr]elease*/
 tests/**/gcc-debug/
 tests/**/gcc-release/
 *.mode*
-*.app/
+#*.app/
 *.pyc
 .svn/
 *.log
@@ -133,3 +133,4 @@ recordings/
 *.avi
 *.mp4
 *.zip
+texts/
