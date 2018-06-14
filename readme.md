@@ -11,3 +11,4 @@ Download the videos and accompanying text files from here: https://www.dropbox.c
 Place them in the app's data folder.
 
 ## Images
+![](https://github.com/antimodular/bambarajos/blob/master/kisses.png)
